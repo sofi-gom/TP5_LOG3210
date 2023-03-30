@@ -148,24 +148,25 @@ public class AvailableExpressionVisitor implements ParserVisitor {
         // TODO exo 2
         computeGenSets();
         computeKillSets();
-        int i = 0;
+        boolean changes = true;
         Set<Expression> tmpOut = new HashSet<>();
-        for (CodeLine code : CODE) {
-            if(i != 0) {
-                // mettre le OUT précédent dans IN
-                code.Avail_IN = tmpOut;
-            }
-            for (Expression expr : code.Avail_IN) {
-                if (!code.KILL.contains(expr)) {
-                    code.Avail_OUT.add(expr);
+        while (changes) {
+            int i = 0;
+            changes = false;
+            for (CodeLine code : CODE) {
+                if(i != 0) {
+                    if (!code.Avail_IN.containsAll(tmpOut)) {
+                        code.Avail_IN.addAll(tmpOut);
+                        changes = true;
+                    }
                 }
+                code.Avail_OUT.addAll(code.Avail_IN);
+                code.Avail_OUT.removeAll(code.KILL);
+                code.Avail_OUT.addAll(code.GEN);
+                tmpOut = code.Avail_OUT;
+                // m_writer.println(tmpOut);
+                i++;
             }
-            for (Expression expr : code.GEN) {
-                code.Avail_OUT.add(expr);
-            }
-            tmpOut = code.Avail_OUT;
-            // m_writer.println(tmpOut);
-            i++;
         }
     }
 
