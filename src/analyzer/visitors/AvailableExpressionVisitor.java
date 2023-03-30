@@ -113,8 +113,8 @@ public class AvailableExpressionVisitor implements ParserVisitor {
         for (CodeLine code : CODE) {
             Expression lineExpr = new Expression(code.left, code.op, code.right);
             code.GEN.add(lineExpr);
-            m_writer.println("// Bloc " + i);
-            m_writer.println("GEN : " + code.left + code.op + code.right);
+            // m_writer.println("// Bloc " + i);
+            // m_writer.println("GEN : " + code.left + code.op + code.right);
             i++;
         }
     }
@@ -132,8 +132,8 @@ public class AvailableExpressionVisitor implements ParserVisitor {
                     String assign = code.ASSIGN;
                     if (assign.equals(otherCode.left) || assign.equals(otherCode.right)) {
                         code.KILL.add(lineExpr);
-                        m_writer.println("// Bloc " + i);
-                        m_writer.println("KILL : " + code.left + code.op + code.right);
+                        // m_writer.println("// Bloc " + i);
+                        // m_writer.println("KILL : " + code.left + code.op + code.right);
                     }
                 }
             }
@@ -146,6 +146,27 @@ public class AvailableExpressionVisitor implements ParserVisitor {
      */
     private void computeAvailableExpr() {
         // TODO exo 2
+        computeGenSets();
+        computeKillSets();
+        int i = 0;
+        Set<Expression> tmpOut = new HashSet<>();
+        for (CodeLine code : CODE) {
+            if(i != 0) {
+                // mettre le OUT précédent dans IN
+                code.Avail_IN = tmpOut;
+            }
+            for (Expression expr : code.Avail_IN) {
+                if (!code.KILL.contains(expr)) {
+                    code.Avail_OUT.add(expr);
+                }
+            }
+            for (Expression expr : code.GEN) {
+                code.Avail_OUT.add(expr);
+            }
+            tmpOut = code.Avail_OUT;
+            // m_writer.println(tmpOut);
+            i++;
+        }
     }
 
     /**
@@ -156,8 +177,8 @@ public class AvailableExpressionVisitor implements ParserVisitor {
     }
 
     public void printCode() {
-        computeGenSets();
-        computeKillSets();
+        // computeGenSets();
+        // computeKillSets();
         int i = 0;
         for (CodeLine code : CODE) {
             String line = code.ASSIGN + " = " + code.left;
