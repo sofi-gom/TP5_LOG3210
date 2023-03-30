@@ -175,6 +175,26 @@ public class AvailableExpressionVisitor implements ParserVisitor {
      */
     private void eliminateCommonExpression() {
         // TODO exo 3
+        int i = 0;
+        for (CodeLine code : CODE) {
+            Expression lineExpr = new Expression(code.left, code.op, code.right);
+            if (code.Avail_IN.contains(lineExpr)) {
+                //m_writer.println("j'ai trouvé le meme au bloc " + i);
+                int y = 0;
+                for (CodeLine otherCode : CODE) {
+                    Expression otherLine = new Expression(otherCode.left, otherCode.op, otherCode.right);
+                    if (lineExpr.equals(otherLine)) {
+                        // m_writer.println("j'ai trouvé le meme au bloc " + y);
+                        code.left = otherCode.ASSIGN;
+                        code.right = "";
+                    }
+                    y++;
+                }
+
+            }
+            i++;
+        }
+
     }
 
     public void printCode() {
