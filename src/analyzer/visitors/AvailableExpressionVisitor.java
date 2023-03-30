@@ -109,6 +109,14 @@ public class AvailableExpressionVisitor implements ParserVisitor {
      */
     public void computeGenSets(){
         // TODO exo 1
+        int i = 0;
+        for (CodeLine code : CODE) {
+            Expression lineExpr = new Expression(code.left, code.op, code.right);
+            code.GEN.add(lineExpr);
+            m_writer.println("// Bloc " + i);
+            m_writer.println("GEN : " + code.left + code.op + code.right);
+            i++;
+        }
     }
 
     /**
@@ -116,6 +124,21 @@ public class AvailableExpressionVisitor implements ParserVisitor {
      */
     public void computeKillSets() {
         // TODO exo 1
+        int i = 0;
+        for (CodeLine code : CODE) {
+            Expression lineExpr = new Expression(code.left, code.op, code.right);
+            for (CodeLine otherCode : CODE) {
+                if (otherCode != code) {
+                    String assign = code.ASSIGN;
+                    if (assign.equals(otherCode.left) || assign.equals(otherCode.right)) {
+                        code.KILL.add(lineExpr);
+                        m_writer.println("// Bloc " + i);
+                        m_writer.println("KILL : " + code.left + code.op + code.right);
+                    }
+                }
+            }
+            i++;
+        }
     }
 
     /**
@@ -133,6 +156,8 @@ public class AvailableExpressionVisitor implements ParserVisitor {
     }
 
     public void printCode() {
+        computeGenSets();
+        computeKillSets();
         int i = 0;
         for (CodeLine code : CODE) {
             String line = code.ASSIGN + " = " + code.left;
