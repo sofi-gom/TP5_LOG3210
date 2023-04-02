@@ -200,8 +200,28 @@ public class ReachingDefinitionsVisitor implements ParserVisitor {
             CODE.clear();
             return;
         }
-        
-
+        // supprimer code qui se trouve entre return et la variable de retour
+        String ret = RETURNS.get(0);
+        //int index = 0;
+        for(int i = CODE.size() - 1; i>= 0; i--){
+            if(!CODE.get(i).ASSIGN.equals(ret)){
+                CODE.remove(i);
+            }
+            //index = i;
+            break;
+        }
+        /*String leftVal = CODE.get(index).left;
+        String rightVal = CODE.get(index).right;
+        for(int i = index - 1; i>=0;i--){
+            for(int j = 0; j < 2; j++){
+                if(i-j>=0) {
+                    String prevLine = CODE.get(i-j).GEN.identifier;
+                    if(!prevLine.equals(leftVal)||!prevLine.equals(rightVal)){
+                        CODE.remove(i-j);
+                    }
+                }
+            }
+        }*/
     }
 
 
