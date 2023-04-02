@@ -112,6 +112,13 @@ public class ReachingDefinitionsVisitor implements ParserVisitor {
      */
     private void computeGenSets() {
         // TODO exo 1
+        //int i = 0;
+        for (CodeLine code : CODE) {
+            code.GEN  = new Definition(code.op, code.ASSIGN, code.left, code.right);
+            //m_writer.println("// Bloc " + i);
+            //m_writer.println("GEN : " + code.GEN.identifier);
+            //i++;
+        }
     }
 
     /**
@@ -119,6 +126,18 @@ public class ReachingDefinitionsVisitor implements ParserVisitor {
      */
     private void computeKillSets() {
         // TODO exo 1
+        //int i = 0;
+        for (CodeLine currentLine : CODE) {
+            for (CodeLine compareLine : CODE) {
+                String assign = currentLine.ASSIGN;
+                if (compareLine != currentLine && assign.equals(compareLine.ASSIGN)){
+                    currentLine.KILL.add(compareLine.GEN);
+                        //m_writer.println("// Bloc " + i);
+                        //m_writer.println("KILL : " + currentLine.KILL.toString());
+                    }
+            }
+            //i++;
+        }
     }
 
     /**
@@ -126,6 +145,28 @@ public class ReachingDefinitionsVisitor implements ParserVisitor {
      */
     private void computeReachingDefinitions() {
         // TODO exo 2
+        computeGenSets();
+        computeKillSets();
+        boolean changes = true;
+        Set<Definition> tmpOut = new HashSet<>();
+        while (changes) {
+            int i = 0;
+            changes = false;
+            for (CodeLine code : CODE) {
+                if(i != 0) {
+                    if (!code.ValDef_IN.containsAll(tmpOut)) {
+                        code.ValDef_IN.addAll(tmpOut);
+                        changes = true;
+                    }
+                }
+                code.ValDef_OUT.addAll(code.ValDef_IN);
+                code.ValDef_OUT.removeAll(code.KILL);
+                code.ValDef_OUT.add(code.GEN);
+                tmpOut = code.ValDef_OUT;
+                // m_writer.println(tmpOut);
+                i++;
+            }
+        }
     }
 
     /**
