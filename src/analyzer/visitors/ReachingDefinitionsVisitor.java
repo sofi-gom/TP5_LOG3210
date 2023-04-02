@@ -174,6 +174,21 @@ public class ReachingDefinitionsVisitor implements ParserVisitor {
      */
     public void computeSingleAssignment() {
         // TODO exo 3
+        int index = 0;
+        for(CodeLine line: CODE){
+            for(int i = index-1; i >= 0 ; i--){
+                // ligne précédente
+                String assign = CODE.get(i).ASSIGN;
+                // si la ligne actuelle utlise une variable défini précédemment -> remplacement de la variable
+                if(line.right.equals(assign)) {
+                    line.right = CODE.get(i).GEN.identifier;
+                }
+                else if(line.left.equals(assign)){
+                    line.left = CODE.get(i).GEN.identifier;
+                }
+            }
+            index++;
+        }
     }
 
     /**
