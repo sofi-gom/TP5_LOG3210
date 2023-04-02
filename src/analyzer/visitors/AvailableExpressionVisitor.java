@@ -126,15 +126,13 @@ public class AvailableExpressionVisitor implements ParserVisitor {
         // TODO exo 1
         int i = 0;
         for (CodeLine code : CODE) {
-            Expression lineExpr = new Expression(code.left, code.op, code.right);
             for (CodeLine otherCode : CODE) {
-                if (otherCode != code) {
-                    String assign = code.ASSIGN;
-                    if (assign.equals(otherCode.left) || assign.equals(otherCode.right)) {
+                String assign = code.ASSIGN;
+                if (otherCode != code && (assign.equals(otherCode.left) || assign.equals(otherCode.right))) {
+                        Expression lineExpr = new Expression(code.left, code.op, code.right);
                         code.KILL.add(lineExpr);
                         // m_writer.println("// Bloc " + i);
                         // m_writer.println("KILL : " + code.left + code.op + code.right);
-                    }
                 }
             }
             i++;
