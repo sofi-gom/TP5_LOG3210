@@ -196,6 +196,12 @@ public class ReachingDefinitionsVisitor implements ParserVisitor {
      */
     public void eliminateDeadCode() {
         // TODO exo 3
+        if(RETURNS.isEmpty()){
+            CODE.clear();
+            return;
+        }
+        
+
     }
 
 
