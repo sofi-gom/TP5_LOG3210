@@ -162,7 +162,6 @@ public class ReachingDefinitionsVisitor implements ParserVisitor {
      * Optimizes the code by eliminating unnecessary assignments.
      */
     public void computeSingleAssignment() {
-        // TODO exo 3
         int index = 0;
         for(CodeLine line: CODE){
             for(int i = index-1; i >= 0 ; i--){
@@ -191,26 +190,20 @@ public class ReachingDefinitionsVisitor implements ParserVisitor {
 
         Queue<String> liveVars = new LinkedList<>(RETURNS);
         ArrayList<CodeLine> optimizedCode = new ArrayList<>();
-        //while(!varsVives.isEmpty()){
             for(int i = CODE.size() - 1; i>= 0; i--){
                 if(liveVars.contains(CODE.get(i).ASSIGN)||liveVars.contains(CODE.get(i).GEN.identifier)){
                     optimizedCode.add(CODE.get(i));
                     liveVars.remove(CODE.get(i).ASSIGN);
                     liveVars.remove(CODE.get(i).GEN.identifier);
-                    if (!CODE.get(i).right.isEmpty() && !CODE.get(i).right.contains("#")){ // condition -> ne pas ajouter des ints ou des espaces vides
+                    // condition -> ne pas ajouter des ints
+                    if (!CODE.get(i).right.isEmpty() && !CODE.get(i).right.contains("#")){
                         liveVars.add(CODE.get(i).right);
                     }
                     if (!CODE.get(i).left.isEmpty() && !CODE.get(i).left.contains("#")){
                         liveVars.add(CODE.get(i).left);
                     }
                 }
-                m_writer.println("VARVIVES");
-                for(String var: liveVars){
-                    m_writer.println(var);
-                }
-                m_writer.println("-----");
             }
-        //}
         Collections.reverse(optimizedCode);
         CODE = optimizedCode;
     }
