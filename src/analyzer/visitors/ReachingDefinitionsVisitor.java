@@ -1,6 +1,7 @@
 package analyzer.visitors;
 
 import analyzer.ast.*;
+import com.sun.org.apache.bcel.internal.generic.RET;
 
 import java.io.PrintWriter;
 import java.util.*;
@@ -200,28 +201,31 @@ public class ReachingDefinitionsVisitor implements ParserVisitor {
             CODE.clear();
             return;
         }
-        // supprimer code qui se trouve entre return et la variable de retour
-        String ret = RETURNS.get(0);
-        //int index = 0;
-        for(int i = CODE.size() - 1; i>= 0; i--){
-            if(!CODE.get(i).ASSIGN.equals(ret)){
-                CODE.remove(i);
-            }
-            //index = i;
-            break;
-        }
-        /*String leftVal = CODE.get(index).left;
-        String rightVal = CODE.get(index).right;
-        for(int i = index - 1; i>=0;i--){
-            for(int j = 0; j < 2; j++){
-                if(i-j>=0) {
-                    String prevLine = CODE.get(i-j).GEN.identifier;
-                    if(!prevLine.equals(leftVal)||!prevLine.equals(rightVal)){
-                        CODE.remove(i-j);
+
+        Queue<String> varsVives = new LinkedList<>(RETURNS);
+        ArrayList<CodeLine> optimizedCode = new ArrayList<>();
+        //while(!varsVives.isEmpty()){
+            for(int i = CODE.size() - 1; i>= 0; i--){
+                if(varsVives.contains(CODE.get(i).ASSIGN)||varsVives.contains(CODE.get(i).GEN.identifier)){
+                    optimizedCode.add(CODE.get(i));
+                    varsVives.remove(CODE.get(i).ASSIGN);
+                    varsVives.remove(CODE.get(i).GEN.identifier);
+                    if (!CODE.get(i).right.isEmpty() && !CODE.get(i).right.contains("#")){ // condition -> ne pas ajouter des ints ou des espaces vides
+                        varsVives.add(CODE.get(i).right);
+                    }
+                    if (!CODE.get(i).left.isEmpty() && !CODE.get(i).left.contains("#")){
+                        varsVives.add(CODE.get(i).left);
                     }
                 }
+                /*m_writer.println("VARVIVES");
+                for(String var: varsVives){
+                    m_writer.println(var);
+                }
+                m_writer.println("-----");*/
             }
-        }*/
+        //}
+        Collections.reverse(optimizedCode);
+        CODE = optimizedCode;
     }
 
 
