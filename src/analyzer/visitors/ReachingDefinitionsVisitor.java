@@ -112,13 +112,8 @@ public class ReachingDefinitionsVisitor implements ParserVisitor {
      * Computes the GEN sets for each line of code.
      */
     private void computeGenSets() {
-        // TODO exo 1
-        //int i = 0;
         for (CodeLine code : CODE) {
             code.GEN  = new Definition(code.op, code.ASSIGN, code.left, code.right);
-            //m_writer.println("// Bloc " + i);
-            //m_writer.println("GEN : " + code.GEN.identifier);
-            //i++;
         }
     }
 
@@ -126,18 +121,13 @@ public class ReachingDefinitionsVisitor implements ParserVisitor {
      * Computes the KILL sets for each line of code.
      */
     private void computeKillSets() {
-        // TODO exo 1
-        //int i = 0;
         for (CodeLine currentLine : CODE) {
             for (CodeLine compareLine : CODE) {
                 String assign = currentLine.ASSIGN;
                 if (compareLine != currentLine && assign.equals(compareLine.ASSIGN)){
                     currentLine.KILL.add(compareLine.GEN);
-                        //m_writer.println("// Bloc " + i);
-                        //m_writer.println("KILL : " + currentLine.KILL.toString());
                     }
             }
-            //i++;
         }
     }
 
@@ -145,7 +135,6 @@ public class ReachingDefinitionsVisitor implements ParserVisitor {
      * Computes the Reaching Definitions Analysis for the code.
      */
     private void computeReachingDefinitions() {
-        // TODO exo 2
         computeGenSets();
         computeKillSets();
         boolean changes = true;
@@ -164,7 +153,6 @@ public class ReachingDefinitionsVisitor implements ParserVisitor {
                 code.ValDef_OUT.removeAll(code.KILL);
                 code.ValDef_OUT.add(code.GEN);
                 tmpOut = code.ValDef_OUT;
-                // m_writer.println(tmpOut);
                 i++;
             }
         }
@@ -196,32 +184,31 @@ public class ReachingDefinitionsVisitor implements ParserVisitor {
      * Eliminates dead code from the code.
      */
     public void eliminateDeadCode() {
-        // TODO exo 3
         if(RETURNS.isEmpty()){
             CODE.clear();
             return;
         }
 
-        Queue<String> varsVives = new LinkedList<>(RETURNS);
+        Queue<String> liveVars = new LinkedList<>(RETURNS);
         ArrayList<CodeLine> optimizedCode = new ArrayList<>();
         //while(!varsVives.isEmpty()){
             for(int i = CODE.size() - 1; i>= 0; i--){
-                if(varsVives.contains(CODE.get(i).ASSIGN)||varsVives.contains(CODE.get(i).GEN.identifier)){
+                if(liveVars.contains(CODE.get(i).ASSIGN)||liveVars.contains(CODE.get(i).GEN.identifier)){
                     optimizedCode.add(CODE.get(i));
-                    varsVives.remove(CODE.get(i).ASSIGN);
-                    varsVives.remove(CODE.get(i).GEN.identifier);
+                    liveVars.remove(CODE.get(i).ASSIGN);
+                    liveVars.remove(CODE.get(i).GEN.identifier);
                     if (!CODE.get(i).right.isEmpty() && !CODE.get(i).right.contains("#")){ // condition -> ne pas ajouter des ints ou des espaces vides
-                        varsVives.add(CODE.get(i).right);
+                        liveVars.add(CODE.get(i).right);
                     }
                     if (!CODE.get(i).left.isEmpty() && !CODE.get(i).left.contains("#")){
-                        varsVives.add(CODE.get(i).left);
+                        liveVars.add(CODE.get(i).left);
                     }
                 }
-                /*m_writer.println("VARVIVES");
-                for(String var: varsVives){
+                m_writer.println("VARVIVES");
+                for(String var: liveVars){
                     m_writer.println(var);
                 }
-                m_writer.println("-----");*/
+                m_writer.println("-----");
             }
         //}
         Collections.reverse(optimizedCode);
