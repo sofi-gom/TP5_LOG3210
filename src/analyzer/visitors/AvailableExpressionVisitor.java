@@ -112,6 +112,9 @@ public class AvailableExpressionVisitor implements ParserVisitor {
         int i = 0;
         for (CodeLine code : CODE) {
             Expression lineExpr = new Expression(code.left, code.op, code.right);
+            if (code.ASSIGN.equals(code.left) || code.ASSIGN.equals(code.right)) {
+                continue;
+            }
             code.GEN.add(lineExpr);
             // m_writer.println("// Bloc " + i);
             // m_writer.println("GEN : " + code.left + code.op + code.right);
@@ -131,8 +134,8 @@ public class AvailableExpressionVisitor implements ParserVisitor {
                 if (otherCode != code && (assign.equals(otherCode.left) || assign.equals(otherCode.right))) {
                         Expression lineExpr = new Expression(code.left, code.op, code.right);
                         code.KILL.add(lineExpr);
-                        // m_writer.println("// Bloc " + i);
-                        // m_writer.println("KILL : " + code.left + code.op + code.right);
+                        //m_writer.println("// Bloc " + i);
+                        //m_writer.println("KILL : " + code.left + code.op + code.right);
                 }
             }
             i++;
@@ -177,14 +180,15 @@ public class AvailableExpressionVisitor implements ParserVisitor {
         for (CodeLine code : CODE) {
             Expression lineExpr = new Expression(code.left, code.op, code.right);
             if (code.Avail_IN.contains(lineExpr)) {
-                //m_writer.println("j'ai trouvé le meme au bloc " + i);
+                //m_writer.println("au bloc " + i);
                 int y = 0;
                 for (CodeLine otherCode : CODE) {
                     Expression otherLine = new Expression(otherCode.left, otherCode.op, otherCode.right);
                     if (lineExpr.equals(otherLine)) {
-                        // m_writer.println("j'ai trouvé le meme au bloc " + y);
+                        //m_writer.println("j'ai trouvé le meme au bloc " + y);
                         code.left = otherCode.ASSIGN;
                         code.right = "";
+                        break;
                     }
                     y++;
                 }
