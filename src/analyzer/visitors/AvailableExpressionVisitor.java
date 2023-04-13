@@ -108,15 +108,12 @@ public class AvailableExpressionVisitor implements ParserVisitor {
      * Computes the GEN sets for each line of code.
      */
     public void computeGenSets(){
-        // TODO exo 1
-        int i = 0;
         for (CodeLine code : CODE) {
             Expression lineExpr = new Expression(code.left, code.op, code.right);
             if (code.ASSIGN.equals(code.left) || code.ASSIGN.equals(code.right)) {
                 continue;
             }
             code.GEN.add(lineExpr);
-            i++;
         }
     }
 
@@ -124,8 +121,6 @@ public class AvailableExpressionVisitor implements ParserVisitor {
      * Computes the KILL sets for each line of code.
      */
     public void computeKillSets() {
-        // TODO exo 1
-        int i = 0;
         for (CodeLine code : CODE) {
             for (CodeLine otherCode : CODE) {
                 String assign = code.ASSIGN;
@@ -134,7 +129,6 @@ public class AvailableExpressionVisitor implements ParserVisitor {
                         code.KILL.add(lineExpr);
                 }
             }
-            i++;
         }
     }
 
@@ -142,7 +136,6 @@ public class AvailableExpressionVisitor implements ParserVisitor {
      * Computes the Available Expression Analysis for the code.
      */
     private void computeAvailableExpr() {
-        // TODO exo 2
         computeGenSets();
         computeKillSets();
         boolean changes = true;
@@ -170,7 +163,6 @@ public class AvailableExpressionVisitor implements ParserVisitor {
      * Eliminates common expressions in the code using the Available Expression Analysis.
      */
     private void eliminateCommonExpression() {
-        // TODO exo 3
         for (CodeLine code : CODE) {
             Expression lineExpr = new Expression(code.left, code.op, code.right);
             if (code.Avail_IN.contains(lineExpr)) {
