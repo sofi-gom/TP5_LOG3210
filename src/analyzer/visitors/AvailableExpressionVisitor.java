@@ -188,6 +188,8 @@ public class AvailableExpressionVisitor implements ParserVisitor {
                         //m_writer.println("j'ai trouvé le meme au bloc " + y);
                         code.left = otherCode.ASSIGN;
                         code.right = "";
+                    }
+                    if (otherCode == code) {
                         break;
                     }
                     y++;
