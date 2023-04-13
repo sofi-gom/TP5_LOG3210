@@ -116,8 +116,6 @@ public class AvailableExpressionVisitor implements ParserVisitor {
                 continue;
             }
             code.GEN.add(lineExpr);
-            // m_writer.println("// Bloc " + i);
-            // m_writer.println("GEN : " + code.left + code.op + code.right);
             i++;
         }
     }
@@ -134,8 +132,6 @@ public class AvailableExpressionVisitor implements ParserVisitor {
                 if (otherCode != code && (assign.equals(otherCode.left) || assign.equals(otherCode.right))) {
                         Expression lineExpr = new Expression(code.left, code.op, code.right);
                         code.KILL.add(lineExpr);
-                        //m_writer.println("// Bloc " + i);
-                        //m_writer.println("KILL : " + code.left + code.op + code.right);
                 }
             }
             i++;
@@ -165,7 +161,6 @@ public class AvailableExpressionVisitor implements ParserVisitor {
                 code.Avail_OUT.removeAll(code.KILL);
                 code.Avail_OUT.addAll(code.GEN);
                 tmpOut = code.Avail_OUT;
-                // m_writer.println(tmpOut);
                 i++;
             }
         }
@@ -176,34 +171,26 @@ public class AvailableExpressionVisitor implements ParserVisitor {
      */
     private void eliminateCommonExpression() {
         // TODO exo 3
-        int i = 0;
         for (CodeLine code : CODE) {
             Expression lineExpr = new Expression(code.left, code.op, code.right);
             if (code.Avail_IN.contains(lineExpr)) {
-                //m_writer.println("au bloc " + i);
-                int y = 0;
-                for (CodeLine otherCode : CODE) {
+                int index = 0;
+                CodeLine otherCode = CODE.get(index);
+                while (otherCode != code) {
                     Expression otherLine = new Expression(otherCode.left, otherCode.op, otherCode.right);
                     if (lineExpr.equals(otherLine)) {
-                        //m_writer.println("j'ai trouvé le meme au bloc " + y);
                         code.left = otherCode.ASSIGN;
                         code.right = "";
                     }
-                    if (otherCode == code) {
-                        break;
-                    }
-                    y++;
+                    index++;
+                    otherCode = CODE.get(index);
                 }
-
             }
-            i++;
         }
 
     }
 
     public void printCode() {
-        // computeGenSets();
-        // computeKillSets();
         int i = 0;
         for (CodeLine code : CODE) {
             String line = code.ASSIGN + " = " + code.left;
